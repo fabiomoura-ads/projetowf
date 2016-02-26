@@ -26,12 +26,9 @@ Route::get('/', function () {
 | kernel and includes session state, CSRF protection, and more.
 |
 */
-//rota para criação de usuario
-Route::post("user/create", "UserController@store");
 
-//rotas da aplicação
-Route::group(array('prefix' => 'api', 'middleware' => 'appauth' ), function(){	
-	Route::resource("user", "UserController");	
+Route::group(array('prefix' => 'api'), function(){
+	Route::resource("user", "UserController");
 });
 
 
