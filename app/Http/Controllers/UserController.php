@@ -22,7 +22,8 @@ class UserController extends Controller
 	protected $context;
 	
 	public function __construct(User $context){
-		$this->context = $context;		
+		$this->context = $context;
+		$this->middleware('appauth', ['except' => 'store']);
 	} 
 	
     public function index()
@@ -49,7 +50,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-		
+				
 		$auth = new AuthController();		
 		$validator = $auth->validator($request->all());
 		
