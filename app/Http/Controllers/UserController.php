@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Middleware\AppAuthController;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Amigo;
 use Validator;
 
 class UserController extends Controller
@@ -23,7 +24,7 @@ class UserController extends Controller
 	
 	public function __construct(User $context){
 		$this->context = $context;
-		$this->middleware('appauth', ['except' => 'store']);
+		//$this->middleware('appauth', ['except' => 'store']);
 	} 
 	
     public function index()
@@ -70,7 +71,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {		
+    {	
+
 		$result = $this->context->find($id);
 		
 		if ( $result ) {
@@ -80,6 +82,10 @@ class UserController extends Controller
 		return response()->json( ['error' => [ "Usuário não localizado com id ". $id ]], 401 );				
     }
 
+	public function amigos($id){		
+		return $this->context->with("amigos")->where('id', $id)->get();	
+	}
+	
     /**
      * Show the form for editing the specified resource.
      *

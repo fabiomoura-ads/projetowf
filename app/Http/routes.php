@@ -27,8 +27,14 @@ Route::get('/', function () {
 |
 */
 
+Route::resource("amigo", "AmigoController");
+Route::resource("user", "UserController");
+Route::resource("u/amigos/{id}", "UserController@amigos");
+	
 Route::group(array('prefix' => 'api'), function(){
+	
 	Route::resource("user", "UserController");
+	
 });
 
 
