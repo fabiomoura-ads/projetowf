@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Amigo;
 use Validator;
+use Mail;
 
 class UserController extends Controller
 {
@@ -58,10 +59,15 @@ class UserController extends Controller
 		if ( $validator->fails() ){		
 			return response()->json( ['error' => [ $validator->errors() ]], 401 );					
 		}
+				
+		$result = $auth->create($request->all());
 		
+		if ( $result ) {			
+			return $this->enviaEmailVerificacao($result["id"]);
+		}
 		
-		return $auth->create($request->all());
-		
+		return response()->json(array("error" => "Não foi possível inserir o usuário, verifique!"), 400);
+		 
 	}
 
     /**
@@ -96,6 +102,29 @@ class UserController extends Controller
     {
 
     }
+	
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function enviaEmailVerificacao($id)
+    {
+		$user = $this->context->find($id);
+		
+		if ( $user ) {
+			
+			Mail::send('welcome', ['user' => $user], function($message){
+				$message->to($user->email, $user->name)->subject("Email Verify Where Friends?");
+			});
+			
+			return response()->json(array("msg" => "Email enviado com sucesso!"), 200);
+		}
+		
+		return response()->json(array("msg" => "Não foi possível enviar email de confirmação, para o usuário de id " .$id), 400);		
+		
+    }	
 
     /**
      * Update the specified resource in storage.
