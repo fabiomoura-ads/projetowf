@@ -29,8 +29,8 @@ class UserController extends Controller
 	} 
 	
     public function index()
-    {
-        return User::all();
+    {		
+		return User::all();
     }
 
     /**
@@ -59,11 +59,11 @@ class UserController extends Controller
 		if ( $validator->fails() ){		
 			return response()->json( ['error' => [ $validator->errors() ]], 401 );					
 		}
-				
+		
 		$result = $auth->create($request->all());
 		
 		if ( $result ) {			
-			return $this->enviaEmailVerificacao($result["id"]);
+			return $this->enviaEmailVerificacao($result->id);
 		}
 		
 		return response()->json(array("error" => "Não foi possível inserir o usuário, verifique!"), 400);
@@ -80,7 +80,7 @@ class UserController extends Controller
     {	
 
 		$result = $this->context->find($id);
-		
+					
 		if ( $result ) {
 			return $result;
 		}
@@ -103,6 +103,7 @@ class UserController extends Controller
 
     }
 	
+	
     /**
      * Show the form for editing the specified resource.
      *
@@ -111,15 +112,18 @@ class UserController extends Controller
      */
     public function enviaEmailVerificacao($id)
     {
+				
 		$user = $this->context->find($id);
 		
 		if ( $user ) {
 			
-			Mail::send('welcome', ['user' => $user], function($message){
+			/*Mail::send('valida_cadatro', ['user' => $user], function($message){
 				$message->to($user->email, $user->name)->subject("Email Verify Where Friends?");
-			});
+			});*/
 			
-			return response()->json(array("msg" => "Email enviado com sucesso!"), 200);
+			return view("valida_cadatro", ["user" => $user] );
+			
+			return response()->json(array("user" => $user), 200);
 		}
 		
 		return response()->json(array("msg" => "Não foi possível enviar email de confirmação, para o usuário de id " .$id), 400);		
@@ -152,6 +156,22 @@ class UserController extends Controller
 		
 		return response()->json( ['error' => [ "Registro nao atualizado" ]], 401 );
     }
+	
+	public function active(Request $request){
+									
+		$user = $this->context->find($request->id);
+		
+		if ( $user && strtolower($user->id) == strtolower($request->id) ) {
+			$request->status = 2 /* Ativo */;
+			$this->update($request, $request->id);
+	
+			return view("cadastro_validado", ["user" => $user] );
+			
+		};
+		
+		return "err";
+		
+	}
 
     /**
      * Remove the specified resource from storage.

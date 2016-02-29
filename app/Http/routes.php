@@ -11,8 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    
+Route::get('/', function () {    
 	return view('welcome');
 });
 
@@ -27,14 +26,17 @@ Route::get('/', function () {
 |
 */
 
-Route::resource("amigo", "AmigoController");
-Route::resource("user", "UserController");
-Route::resource("u/amigos/{id}", "UserController@amigos");
+//Route::resource("amigo", "AmigoController");
+//Route::resource("user", "UserController");
+//Route::resource("u/amigos/{id}", "UserController@amigos");
+
+//Route::post("user/active", "UserController@activeUser");
+	
 	
 Route::group(array('prefix' => 'api'), function(){
-	
-	Route::resource("user", "UserController");
-	
+
+	Route::resource("user", "UserController");	
+	Route::get("user/active/{id}", "UserController@active");	
 });
 
 
